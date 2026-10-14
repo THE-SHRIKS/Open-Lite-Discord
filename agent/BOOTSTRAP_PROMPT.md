@@ -1,0 +1,3 @@
+# First coding-agent instruction
+
+You are starting with an initially EMPTY app repository plus this engineering kit. DO NOT assume the app exists. Read AGENTS.md and all specs; build SIDEBAND in `apps/` and `packages/` incrementally. Do not replace the specs with shorter ones or inject remote third-party dependencies. First task is P0-01 only. Check tests and use progress.md as the durable truth. Build a polished original product with local Fastify, SQLite and Socket.IO. Finish one verifiable slice, report changed files and tests. If you lack an installed tool, log an exact blocker. Never hallucinate a green test.

@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Production builds
+dist/
+**/dist/
+build/
+**/build/
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+
+# Testing & Reports
+coverage/
+playwright-report/
+test-results/
+.pytest_cache/
+__pycache__/
+
+# Local Storage & Database
+.local-data/
+**/.local-data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+uploads/
+**/uploads/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs & System
+*.log
+**/*.log
+.DS_Store
+Thumbs.db
+
+# Agent working outputs
+agent/current-task-prompt.md
+agent/agent-output.log

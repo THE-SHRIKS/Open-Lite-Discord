@@ -1,0 +1,33 @@
+{
+  "name": "open-lite-discord",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/web",
+    "apps/server",
+    "packages/contracts"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n SERVER,WEB -c magenta,cyan \"npm run dev --workspace=apps/server\" \"npm run dev --workspace=apps/web\"",
+    "build": "npm run build --workspace=packages/contracts && npm run build --workspace=apps/server && npm run build --workspace=apps/web",
+    "start": "npm run start --workspace=apps/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings=0",
+    "test": "vitest run --reporter=verbose",
+    "test:e2e": "playwright test",
+    "db:migrate": "npm run db:migrate --workspace=apps/server",
+    "seed:demo": "npm run seed:demo --workspace=apps/server",
+    "db:reset": "npm run db:reset --workspace=apps/server",
+    "verify:all": "npm run typecheck && npm run lint && npm run test && npm run build && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

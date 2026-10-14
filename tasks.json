@@ -1,0 +1,640 @@
+{
+  "schema": 1,
+  "project": "SIDEBAND",
+  "phases": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+  ],
+  "tasks": [
+    {
+      "id": "P0-01",
+      "phase": "P0",
+      "title": "Initialize TypeScript monorepo",
+      "objective": "Create root npm workspace and Vite React web, Fastify server, shared contracts. Locked dependencies, no remote runtime integrations.",
+      "acceptance": [
+        "Root npm workspaces include apps/web, apps/server, packages/contracts.",
+        "Local dev boots two processes with proxy and production serves SPA from same origin.",
+        "No CDN, external fonts, Firebase, hosted APIs or copied clone sources."
+      ],
+      "required_files": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.base.json",
+        "apps/web/package.json",
+        "apps/server/package.json",
+        "packages/contracts/package.json",
+        "apps/web/index.html",
+        "apps/server/src/index.ts"
+      ],
+      "commands": [
+        "npm run typecheck"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "P0-02",
+      "phase": "P0",
+      "title": "Create quality and test foundation",
+      "objective": "Install configured lint, formatter, Vitest tests, dev scripts and .env validation.",
+      "acceptance": [
+        "npm scripts work: lint, typecheck, test, build, dev, start, db:migrate, seed:demo, test:e2e, verify:all.",
+        "Vitest contains nontrivial sample contract test and test runner returns nonzero on failure.",
+        "Server config validates HOST, PORT, DATA_DIR and defaults to loopback."
+      ],
+      "required_files": [
+        "eslint.config.js",
+        "vitest.config.ts",
+        "apps/server/src/config.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "P0-03",
+      "phase": "P0",
+      "title": "Implement SQLite migrations",
+      "objective": "SQLite schema, WAL, FK enforcement, indexed queries, migration and safe local paths.",
+      "acceptance": [
+        "All tables in docs/SCHEMA.md exist with required foreign keys and uniqueness constraints.",
+        "Migrations are idempotent; tests prove a new DB can be initialized and reopened.",
+        ".local-data is ignored; runtime NEVER fetches remote storage."
+      ],
+      "required_files": [
+        "apps/server/src/db/index.ts",
+        "apps/server/src/db/migrate.ts",
+        "apps/server/src/db/migrations/001_init.sql"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "P0-04",
+      "phase": "P0",
+      "title": "Implement local registration and sessions",
+      "objective": "Server-side scrypt password auth, session cookies, login/logout/me and Origin checks.",
+      "acceptance": [
+        "Register/login/me/logout works against SQLite; revoked/expired sessions fail.",
+        "Use secure random salt and session token; store only session token hashes.",
+        "Denied routes return typed errors, not 200 JSON with faux success."
+      ],
+      "required_files": [
+        "apps/server/src/auth/service.ts",
+        "apps/server/src/auth/routes.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "P0-05",
+      "phase": "P0",
+      "title": "Implement core HTTP spaces, channels and message posting",
+      "objective": "Real DB-backed CRUD foundation to support UI, with role checks and basic pagination.",
+      "acceptance": [
+        "Authenticated owner can create spaces and channels and post/query messages.",
+        "Message ordering uses transactional per-channel sequence and idempotent client nonce.",
+        "Cross-space access denied; integration tests cover one allow and one deny."
+      ],
+      "required_files": [
+        "apps/server/src/domains/spaces.ts",
+        "apps/server/src/domains/channels.ts",
+        "apps/server/src/domains/messages.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test"
+      ],
+      "status": "complete"
+    },
+    {
+      "id": "P1-06",
+      "phase": "P1",
+      "title": "Implement authored design tokens and app shell",
+      "objective": "Establish SIDEBAND design system and responsive original layout from design/VISUAL_DIRECTION.md.",
+      "acceptance": [
+        "Real CSS tokens; sidebar, header and content stage display at 1440 and 390px.",
+        "No copied Discord assets, generic SaaS card grids, neon or remote fonts.",
+        "Layout can handle long names, scroll states and keyboard focus."
+      ],
+      "required_files": [
+        "apps/web/src/styles/tokens.css",
+        "apps/web/src/styles/app.css",
+        "apps/web/src/components/AppShell.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P1-07",
+      "phase": "P1",
+      "title": "Build sign-in and registration screens",
+      "objective": "Usable forms connected to actual local auth API with validation and real session.",
+      "acceptance": [
+        "New account creation and session restoration work across refresh.",
+        "Errors are shown inline with accessible labels; no stubbed success state.",
+        "Authenticated navigation redirects to the app."
+      ],
+      "required_files": [
+        "apps/web/src/features/auth/AuthScreen.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build",
+        "npm run test"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P1-08",
+      "phase": "P1",
+      "title": "Build space and channel navigation",
+      "objective": "Wire space switcher, channel list and create flows to server-side APIs.",
+      "acceptance": [
+        "Spaces and channels created through UI survive reload.",
+        "Member can navigate among spaces and channels with visible active states.",
+        "Empty space/channel designs exist and all create actions work."
+      ],
+      "required_files": [
+        "apps/web/src/features/spaces/SpaceRail.tsx",
+        "apps/web/src/features/channels/ChannelList.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P1-09",
+      "phase": "P1",
+      "title": "Build message stage and composer",
+      "objective": "Build timestamp-grouped message feed, keyboard composer, history pagination and optimistic-safe send.",
+      "acceptance": [
+        "Send writes to server, not localStorage; refresh returns all messages.",
+        "Long messages wrap, code blocks render safely, composer supports keyboard.",
+        "No duplicated messages after retry with same nonce."
+      ],
+      "required_files": [
+        "apps/web/src/features/messages/MessageTimeline.tsx",
+        "apps/web/src/features/messages/MessageComposer.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build",
+        "npm run test"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P1-10",
+      "phase": "P1",
+      "title": "Build member sidebar and contextual dialogs",
+      "objective": "Original member panel, channel details, profile/preferences, command and modal treatment.",
+      "acceptance": [
+        "Member sidebar displays real membership data; dialogs close on Escape, trap focus where appropriate.",
+        "Controls that exist are wired to functionality or visibly disabled as future work.",
+        "No inert interactive buttons misleading user."
+      ],
+      "required_files": [
+        "apps/web/src/features/members/MemberPanel.tsx",
+        "apps/web/src/features/settings/SettingsPanel.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P1-11",
+      "phase": "P1",
+      "title": "Polish responsive and UI states",
+      "objective": "Mobile channel drawer, no overflow, designed loading/error/disconnected/empty states and screenshots.",
+      "acceptance": [
+        "At 320/390/768/1024/1440 widths no blocked composer or horizontal overflow.",
+        "Keyboard focus visible; reduced-motion respected.",
+        "Capture screenshots; HUMAN must inspect actual visuals before phase approval."
+      ],
+      "required_files": [
+        "apps/web/src/components/ResponsiveNavigation.tsx",
+        "docs/SCREENSHOT_REVIEW.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P2-12",
+      "phase": "P2",
+      "title": "Implement invitations and account joining",
+      "objective": "Secure scoped token-based invites with expiry, usage cap, join flow and audit.",
+      "acceptance": [
+        "Owner generates invite; second user redeems into a space.",
+        "Expired/revoked/overused invite rejected; plaintext tokens never persisted.",
+        "Redemption atomic under concurrent requests."
+      ],
+      "required_files": [
+        "apps/server/src/domains/invites.ts",
+        "apps/web/src/features/invites/InviteFlow.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P2-13",
+      "phase": "P2",
+      "title": "Implement real roles and private channel grants",
+      "objective": "Complete owner/admin/member permission matrix and channel membership.",
+      "acceptance": [
+        "Private channel read/create/search/socket denied for unauthorized members.",
+        "Owner cannot be demoted/removed by others, role operations audited.",
+        "Server uses one centralized authorization service."
+      ],
+      "required_files": [
+        "apps/server/src/auth/permissions.ts",
+        "apps/web/src/features/members/RoleEditor.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P2-14",
+      "phase": "P2",
+      "title": "Implement edit/delete and cursor pagination",
+      "objective": "Message editing, soft deletion, history paging with server canonical ordering.",
+      "acceptance": [
+        "User can edit/delete own messages, administrator can moderate, others denied.",
+        "History paging neither skips nor duplicates boundary messages.",
+        "Deleted message remains tombstone and no original content leaks to client."
+      ],
+      "required_files": [
+        "apps/server/src/domains/messageMutations.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P2-15",
+      "phase": "P2",
+      "title": "Implement search and persisted read cursors",
+      "objective": "Permission-filtered message search and per-user channel read positions.",
+      "acceptance": [
+        "Search runs against SQLite and excludes inaccessible private channels.",
+        "Results jump to correct message and highlight match.",
+        "Unread count survives page reload and is per-user/per-channel."
+      ],
+      "required_files": [
+        "apps/server/src/domains/search.ts",
+        "apps/web/src/features/search/SearchPanel.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P2-16",
+      "phase": "P2",
+      "title": "Implement local attachment lifecycle",
+      "objective": "Locally stored, validated files with authenticated retrieval and secure deletion.",
+      "acceptance": [
+        "File size/type/filename and path traversal tests; only authorized readers can fetch.",
+        "Uploads are local disk, filenames sanitized; metadata saved in SQLite.",
+        "UI shows progress, errors, preview for safe types only."
+      ],
+      "required_files": [
+        "apps/server/src/domains/attachments.ts",
+        "apps/web/src/features/messages/AttachmentPicker.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P3-17",
+      "phase": "P3",
+      "title": "Authenticate WebSocket subscriptions",
+      "objective": "Socket.IO attached to Fastify with sessions, per-room authorization and typed events.",
+      "acceptance": [
+        "Anonymous/expired user rejected at handshake; unauthorized room denied.",
+        "Server and client share contracts; CORS/Origin bounded to local approved origins.",
+        "Subscriptions are cleaned on disconnect."
+      ],
+      "required_files": [
+        "apps/server/src/realtime/index.ts",
+        "packages/contracts/src/events.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P3-18",
+      "phase": "P3",
+      "title": "Implement real-time two-user messaging",
+      "objective": "Broadcast message create/edit/delete after DB commit, across separate browser contexts.",
+      "acceptance": [
+        "User B sees A send without refresh; message order consistent with persisted state.",
+        "Server-side events only after committed writes.",
+        "Separate authenticated clients, not a simulated single-user demo."
+      ],
+      "required_files": [
+        "apps/web/src/features/messages/useRealtimeMessages.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P3-19",
+      "phase": "P3",
+      "title": "Implement reconnect, deduplication and backlog",
+      "objective": "Online/offline transitions, fetch missed events, no duplicate messages or stale cursors.",
+      "acceptance": [
+        "Server restart/reconnect recovers all persisted messages.",
+        "Send retry with identical clientNonce does not create duplicate.",
+        "Disconnected state clear; UI offers retry and handles invalid session."
+      ],
+      "required_files": [
+        "apps/web/src/features/messages/useConnectionState.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P3-20",
+      "phase": "P3",
+      "title": "Implement ephemeral typing and presence",
+      "objective": "Bounded typing/presence signals with debounce and user privacy.",
+      "acceptance": [
+        "Typing transitions not stored as messages; disconnect clears presence.",
+        "Server validates membership, rate limits ephemeral actions.",
+        "Two browser contexts show consistent indicators."
+      ],
+      "required_files": [
+        "apps/server/src/realtime/presence.ts",
+        "apps/web/src/features/messages/TypingIndicator.tsx"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P3-21",
+      "phase": "P3",
+      "title": "Synchronize roles and channels in real time",
+      "objective": "Membership changes invalidate subscriptions and client navigation immediately.",
+      "acceptance": [
+        "Removing access ejects user from subscribed private room promptly.",
+        "Edited/archived channels propagate to authorized clients.",
+        "HTTP and Socket.IO access-control tests pass concurrently."
+      ],
+      "required_files": [
+        "apps/server/src/realtime/authorization.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P4-22",
+      "phase": "P4",
+      "title": "Expand unit and integration tests",
+      "objective": "Coverage for core permissions, migrations, idempotency, sessions and contract validity.",
+      "acceptance": [
+        "Unit+integration tests use temporary SQLite DB; test failures must block progress.",
+        "Negative paths, edge cases and race conditions tested.",
+        "No test skips to force green."
+      ],
+      "required_files": [
+        "tests/integration/core.test.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P4-23",
+      "phase": "P4",
+      "title": "Create two-context Playwright E2E tests",
+      "objective": "Real browser tests with separate contexts, local backend and seed fixture.",
+      "acceptance": [
+        "Two independent contexts register, invite, chat, reload and observe live delivery.",
+        "Permission denial tested through UI and direct HTTP/WS.",
+        "Screenshots saved for UI review and test:e2e exits on failures."
+      ],
+      "required_files": [
+        "playwright.config.ts",
+        "tests/e2e/chat.spec.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test:e2e"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P4-24",
+      "phase": "P4",
+      "title": "Harden security and API error handling",
+      "objective": "Complete rate limits, schema validation, XSS, origin and auth negatives.",
+      "acceptance": [
+        "Unauthorized read/search/attachments/socket tests fail safely.",
+        "Safe HTML rendering and bounded request payloads.",
+        "Session revocation and invite expiry tested."
+      ],
+      "required_files": [
+        "tests/integration/security.test.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run test:e2e"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P4-25",
+      "phase": "P4",
+      "title": "Accessibility and interaction quality",
+      "objective": "Keyboard operation, dialogs, accessible labels and reduced-motion.",
+      "acceptance": [
+        "Tab/Enter/Escape controls major screens; focus not lost after navigation.",
+        "Contrast and legibility checked; no blocked composer at 320px.",
+        "Automated accessibility assertions plus human UX review."
+      ],
+      "required_files": [
+        "tests/e2e/accessibility.spec.ts"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test:e2e"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P4-26",
+      "phase": "P4",
+      "title": "Run offline, performance and durability tests",
+      "objective": "Verify no remote calls, 500+ messages scroll, restart consistency, query indexes.",
+      "acceptance": [
+        "Network inspect shows local connections only, disconnected WAN mode works.",
+        "Seed 500+ messages; message timeline remains responsive.",
+        "Restart maintains messages, users and invite state."
+      ],
+      "required_files": [
+        "tests/e2e/durability.spec.ts",
+        "docs/QUALITY_REPORT.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run test:e2e",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P5-27",
+      "phase": "P5",
+      "title": "Finalize reproducible demo seed and reset",
+      "objective": "One-command DB migration/demo seed/reset with safe deletion rules and original data.",
+      "acceptance": [
+        "npm run db:migrate and seed:demo work on clean checkout.",
+        "Two demo accounts and sample channels demonstrate real interactions.",
+        "Credentials not committed and reset refuses unsafe path."
+      ],
+      "required_files": [
+        "apps/server/src/db/seed.ts",
+        "docs/DEMO_RUNBOOK.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P5-28",
+      "phase": "P5",
+      "title": "Implement opt-in LAN demo",
+      "objective": "Server binds loopback by default, offers deliberate DEMO_LAN mode for same-Wi-Fi audience.",
+      "acceptance": [
+        "DEFAULT host only 127.0.0.1; LAN mode only when explicitly set.",
+        "Client assets/API/sockets same-origin in production build.",
+        "Documented security and firewall limits; no tunnelling services."
+      ],
+      "required_files": [
+        "apps/server/src/config.ts",
+        "docs/DEMO_RUNBOOK.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P5-29",
+      "phase": "P5",
+      "title": "Record test and visual evidence",
+      "objective": "Complete final screenshots and verified tests; no fabricated or scripted-fake results.",
+      "acceptance": [
+        "Record screenshots all target widths, two-user chat, permission failure and persisted reload.",
+        "Summary contains actual tested commands and known limitations.",
+        "HUMAN reviews visuals and functionality; no false claim of Discord backend recovery."
+      ],
+      "required_files": [
+        "docs/FINAL_VERIFICATION.md",
+        "docs/SCREENSHOT_REVIEW.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run test",
+        "npm run test:e2e",
+        "npm run build"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "P5-30",
+      "phase": "P5",
+      "title": "Sanitize and prepare OpenDeck release",
+      "objective": "Make repo documentation, license, cleanup and local setup robust, without actually publishing.",
+      "acceptance": [
+        "All root commands execute on clean checkout after npm install.",
+        "No secrets, non-original assets, private test data or remote runtime dependencies.",
+        "Open source release README accurate; human controls when GitHub/OpenDeck listing goes live."
+      ],
+      "required_files": [
+        "LICENSE",
+        "docs/FINAL_VERIFICATION.md",
+        "docs/DEMO_RUNBOOK.md"
+      ],
+      "commands": [
+        "npm run typecheck",
+        "npm run lint",
+        "npm run test",
+        "npm run build",
+        "npm run test:e2e",
+        "npm run verify:all"
+      ],
+      "status": "pending"
+    }
+  ],
+  "approvals": {}
+}
